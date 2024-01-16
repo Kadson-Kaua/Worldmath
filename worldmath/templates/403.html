@@ -1,0 +1,26 @@
+
+{% block content %}
+<style>
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+            body {
+            background-color: #e7f2fd;
+            transition: all 0.5s ease;
+        }
+</style>
+<main style="padding-left: 50px;">
+<section class="container-fluid" style="text-align: center; display: flex; justify-content: center; align-items: center; flex-direction: column; height: 50vh;">
+<div><h1>Permissão Negada! (403)</h1></div>
+
+<p>{% if exception %}{{ exception }}{% else %}Você não tem permissão para acessar essa página.{% endif %}</p>
+</section>
+</main>
+{% endblock content %}
+

@@ -1,0 +1,136 @@
+{% extends "base_dashboard.html" %}
+{% load i18n %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+{% block content %}
+<div style="padding-left: 40px;" class="container mt-4">
+    <h3 class="mb-4">Lista de Usuários</h3>
+
+    <table class="table table-striped mt-3">
+        <thead class="thead-primary">
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Grupo Atual</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            
+            <tr>
+                <td>{{ object.username }}</td>
+                <td>{{ object.email }}</td>
+                <td>
+                    {% for group in object.groups.all %}
+                    {{ group.name }}
+                    {% empty %}
+                    <p>Não pertence a nenhum grupo.</p>
+                    {% endfor %}
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalExemplo-{{ object.id }}" style="margin-right:5px;">
+                            <i class="fas fa-trash"></i>
+                        </a>                
+                        {% include "users/user_confirm_delete.html" %}
+                        {% if not object.groups.exists %}
+                        <form method="post" action="{% url 'users:atualizar_grupo_administrador' object.id %}"
+                            class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Tornar Redator
+                            </button>
+                        </form>
+                        {% else %}
+                        {% for group in object.groups.all %}
+                        {% if group.name == "Administrador" %}
+                            <!-- Se o usuário estiver no grupo Administrador, não exibe nenhum botão -->
+                        {% else %}
+                            {% if group.name == "Redator" %}
+                                <form style="margin-right: 5px;" method="post" action="{% url 'users:remover_grupo_administrador' object.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Remover do grupo
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'users:atualizar_grupo_administrador' object.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Tornar Redator
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                        {% endif %}
+
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">
+                    <p>Não existem reservas cadastradas.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<span class="br-divider my-3"></span>
+
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">
+                First
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_number in page_obj.paginator.page_range %}
+            {% if page_obj.number|add:-3 <= page_number <= page_obj.number|add:3 %}
+                {% if page_obj.number == page_number %}
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{ page_number }}">
+                        {{ page_number }}
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_number }}">
+                        {{ page_number }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                Next
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                Last
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block content %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+    :root {
+        --primary: #646565;
+        --secondary: #261E5A;
+    }
+
+    .btn-custom-blue {
+        background-color: blue;
+        /* Adicione outros estilos necessários */
+    }
+    .card {
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.4s ease-in-out;
+        overflow: hidden;
+        border-radius: 18px; /* Ajustei o raio da borda */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 22rem; /* Ajustei o tamanho máximo */
+        width: 100%; /* Garante que o card se ajuste ao contêiner pai */
+        margin: 0 auto; /* Centraliza o card no contêiner pai */
+    }
+
+    .card img {
+        max-width: 100%;
+        height: 220px; /* Ajuste a altura conforme necessário */
+        object-fit: cover; /* Mantém proporções da imagem */
+    }
+
+    .card-body {
+        padding: 18px; /* Ajustei o padding */
+        background: white;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Adicionado para garantir que a altura do card se ajuste ao conteúdo */
+        font-family: 'Poppins', sans-serif; /* Usando a fonte Poppins */
+    }
+
+    .card-title {
+        margin: 0 0 12px 0; /* Ajustei a margem */
+        font-size: 1.8rem; /* Ajustei o tamanho da fonte */
+        color: var(--secondary);
+        transition: color 0.3s ease-out;
+    }
+
+    .card-text {
+        color: var(--secondary);
+        flex-grow: 1;
+    }
+
+    .card-buttons {
+        margin-top: auto; /* Move os botões para o final do card */
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
+
+    .card-buttons a {
+        margin-right: 12px; /* Ajustei a margem */
+        margin-bottom: 12px; /* Ajustei a margem */
+        border-radius: 20px;
+    }
+
+    .card:hover .card-title {
+        color: var(--primary);
+    }
+
+    .card:hover .card-text {
+        color: var(--primary);
+    }
+    .navbar-brand img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
+
+    <main>
+        <section class="main container-fluid">
+            <div class="row d-flex align-items-center">
+                <div class="col-xl-6 col-lg-8">
+                    <h1>Entre em uma aventura pelo mundo da matemática. </h1>
+                    <p>Conheça as grandes mentes da matemática!</p>
+                    <a style="border-radius: 30px;" href="{% url 'Postagem:Historia' %}"><button type="button" style="border-radius: 30px;" class="btn btn-custom-blue"><strong>EMBARCAR</strong></button></a>
+                </div>
+                <div class="col-xl-6 col-lg-8">
+                    <img class="img-fluid" src="{% static 'images/MathematicsProf.png' %}" alt="Mathematics bro">
+                </div>
+            </div>
+        </section>
+        
+        <section class="mais-vistos-bk container-fluid">
+            <section class="exercicios row align-items-stretch">
+
+                <div class="col-xl-8 col-lg-9 container-fluid">
+                    {% if first_object_matematicos %}
+                    <h2>Mais recentes da semana...</h2>
+                    <div class="row">
+                        <div style="height: 500px;" class="col-xl-9 col-lg-8 col-md-10 pitagoras">
+                            
+                            <div class="row d-flex align-items-center">
+                                
+                                <img style="width: 30%; border-radius: 20%;" class="col-3" src="{{ first_object_matematicos.imagem.url }}" alt="Pitagoras" alt="">
+                         
+                                <div class="col-3">
+                                    <h3>{{ first_object_matematicos.titulo }}</h3>
+                                    
+                                </div>
+                            </div>
+                            <p class="p-pitagoras">{{ first_object_matematicos.Resumo }}</p>
+                            <div style="display: flex; justify-content: center;">
+                                <a href="{% url 'Postagem:Detail_matematico' first_object_matematicos.id %}">
+                                    <button type="button" class="conheca btn btn-custom-blue" style="margin-top: 60px;">Conheça mais</button>
+                                </a>
+                            </div>
+                            
+                        </div>
+                  
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-xl-4 col-lg-8 border-ex">
+                    <h2>Exercícios</h2>
+                    <div class="card-baixar">
+                        <img src="{% static 'images/questionarios.png' %}" class="card-img-top" alt="...">
+                        <div class="info-baixar align-items-center">
+                            <div>
+                                <h5 class="">Exercite sua mente com os nossos questionários.</h5>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'Postagem:exercicios' %}"><button type="button" class="conheca btn btn-custom-blue">Baixar
+                                            agora!</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section class="poesia">
+            <h2 style="margin-bottom: 20px; white-space: nowrap;">Venha conhecer também as novidades do mundo!</h2>
+            <div class="row w-100">
+                <div class="col-xl-6 col-lg-8 d-flex justify-content-around flex-wrap w-100">
+                    {% for postagem in latest_objects_novidades %}
+                    <div class="card mb-3 border rounded" style="width: 25rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <img class="card-img-top img-fluid" src="{{ postagem.imagem.url }}" alt="{{ postagem.titulo }}">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ postagem.titulo }}</h4>
+                            <p class="card-text">{{ postagem.Resumo }}</p>
+                        </div>
+                        <div class="d-flex justify-content-end" style="margin-right: 10px; margin-bottom: 10px;">
+                            <a style="border-radius: 20px;" href="{% url 'Postagem:Detail_novidades' postagem.id %}" class="btn btn-primary btn btn-custom-blue">Postagem completa</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        
+               
+    </main>
+    {% endblock %}

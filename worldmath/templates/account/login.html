@@ -1,0 +1,341 @@
+
+
+{% load i18n %} {% load account socialaccount %} {% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+        integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+:root {
+  --text-dark: hsl(240, 54%, 15%);
+  --text-light: hsl(242, 18%, 64%);
+  --primary: hsl(222, 98%, 60%);
+  --primary-lighter: hsl(240, 33%, 86%);
+  --primary-gradient: linear-gradient(to right, #3671fd, #6f31ff);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.a,
+.button {
+  all: unset;
+  cursor: pointer;
+}
+
+body, nav, footer{background-color: #f5f9ff;}
+
+main {
+  font-family: Poppins, sans-serif;
+  min-height: 100vh;
+  background-color: #f5f9ff;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Adicione esta linha para centralizar verticalmente */
+}
+
+.container {
+  max-width: 1070px;
+  width: 100%;
+  display: flex;
+  margin-inline: 1rem;
+  flex-direction: column; /* Adicione esta linha para empilhar os filhos verticalmente */
+  align-items: center; /* Adicione esta linha para centralizar horizontalmente */
+}
+
+.form-section {
+  width: 100%; /* Alterado para 100% para ocupar toda a largura do contêiner */
+  background-color: white;
+  padding: 2.5rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-wrapper {
+  width: 75%;
+  margin: 0 auto;
+}
+
+.logo-container {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 2.2rem;
+}
+
+.form-wrapper > h2 {
+  margin-bottom: 0.1rem;
+}
+.form-wrapper > p {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.form-group label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #16164d;
+}
+.form-group input {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding: 0.5rem;
+  border: 2px solid var(--primary-lighter);
+  border-radius: 0.3rem;
+}
+.form-group input:focus {
+  border: 2px solid #16164d;
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.remember-me {
+  display: grid;
+  grid-template-columns: 1rem auto;
+  gap: 0.6rem;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  place-content: center;
+}
+
+.remember-me input {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.3rem;
+  border: 1px solid var(--text-light);
+  border-radius: 2px;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  background-color: white;
+  transform: scale(0);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+.remember-me input:checked {
+  background: var(--primary-gradient);
+}
+
+.remember-me label {
+  color: var(--text-dark);
+  user-select: none;
+}
+.remember-forgot a {
+  color: var(--primary);
+}
+.remember-forgot a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--primary);
+}
+
+.login-btn,
+.google-signin {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+
+  font-weight: 500;
+  padding: 0.5rem 0;
+  border-radius: 0.5rem;
+}
+
+.login-btn {
+  color: white;
+  background: var(--primary-gradient);
+}
+.login-btn:hover {
+  opacity: 0.9;
+}
+
+.or-divider {
+  width: 100%;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-block: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+.or-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 45%;
+  background-color: var(--text-light);
+}
+.or-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 1px;
+  width: 45%;
+  background-color: var(--text-light);
+}
+
+.google-signin {
+  border: 2px solid var(--primary-lighter);
+}
+.google-signin object {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@media screen and (max-width: 50rem) {
+  .container {
+    max-width: 80%;
+    flex-direction: column;
+    margin-inline: 0;
+  }
+
+  .form-section {
+    width: 100%;
+  }
+
+  .form-section {
+    flex: 1;
+    padding: 1rem 1rem;
+  }
+  .logo-container {
+    margin-bottom: 1rem;
+  }
+  .form-wrapper > h2 {
+    font-size: 1.25rem;
+  }
+  .form-wrapper > p {
+    margin-bottom: 1rem;
+  }
+  .form-wrapper button {
+    font-size: 0.875rem;
+  }
+  .or-divider {
+    font-weight: 500;
+    margin-block: 0.6rem;
+  }
+}
+
+@media screen and (max-width: 36.25rem) {
+  .container {
+    max-width: 100%;
+  }
+  .form-wrapper {
+    width: 100%;
+  }
+}
+</style>
+
+<main>
+  <section class="container">
+    {% include "layouts/alerts.html" %}
+
+    <div class="form-section">
+      <div class="form-wrapper">
+        <!-- Adicione a lógica de login aqui -->
+        <form class="login-form" method="POST" action="{% url 'account_login' %}">
+          {% csrf_token %}
+          <div style="margin-bottom: 60px; margin: 0 auto;" class="logo-container">
+            <a href="{% url 'Postagem:index' %}" class="logo-container a">
+              <img src="{% static 'images/logo.png' %}" alt="Logo">
+            </a>
+          </div>
+
+          <h2 style="margin-top: 80px;">Bem vindo!</h2>
+          <p style="margin-bottom: 20px;">Insira suas credenciais para acessar sua conta.</p>
+
+          <div class="input-container">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="login" class="form-control" placeholder="Nome do usuário" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="input-group">
+                <input type="password" id="password" name="password" class="form-control toggle-password" placeholder="Senha do usuário" required>
+                <button class="btn btn-outline-secondary toggle-password-btn" type="button" id="togglePassword1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                    <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486z"/>
+                    <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                    <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708"/>
+                  </svg>
+                </button>
+              </div>
+            </div>   
+          </div>
+
+          <div class="remember-forgot">
+            <div class="remember-me">
+              <input class="form-check-input" id="remember-me" name="keep_connected_checkbox" type="checkbox" aria-label="Remember me" />
+              <label class="form-check-label" for="remember-me">Manter conectado</label>
+            </div>
+
+            <a class="a" href="{% url 'account_reset_password' %}">Esqueceu a senha?</a>
+          </div>
+
+          <button style="margin-top: 40px;" class="login-btn a" type="submit">Log In</button>
+        </form> 
+        <!-- Fim da lógica de login -->
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const passwordInputs = document.querySelectorAll('.toggle-password');
+      const passwordToggleBtns = document.querySelectorAll('.toggle-password-btn');
+  
+      passwordToggleBtns.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          const type = passwordInputs[index].type === 'password' ? 'text' : 'password';
+          passwordInputs[index].type = type;
+        });
+      });
+    });
+  </script>
+</main>
+{% endblock %}

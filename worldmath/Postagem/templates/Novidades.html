@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block content %}
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    main {
+        width: 85%;
+        margin: auto;
+        margin-bottom: 100px;
+        margin-top: 50px;
+    }
+
+    .filtro {
+        margin-right: 4px;
+    }
+
+    .bt-buscar {
+        margin-top: 16px;
+    }
+
+    .section-motos {
+        padding: 40px 0;
+    }
+
+    .filtros-side {
+        box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        background-color: #FFFFFF;
+        height: 20rem;
+
+    }
+
+    .form-filtro div label {
+        font-weight: 400;
+        margin-left: 5px;
+    }
+
+    .form-filtro div {
+        margin-bottom: 8px;
+    }
+
+    h1 {
+        margin-left: 20%;
+    }
+
+    .line-buttons button {
+        width: 30%;
+        background-color: #0994c7;
+        border: 1px solid #0994c7;
+        font-weight: 600;
+
+    }
+
+    .line-buttons button:hover {
+        background-color: #0a84b1;
+        border: 1px solid #0a84b1;
+
+    }
+
+    .line-buttons {
+        margin-bottom: 40px;
+    }
+
+    .meio {
+        margin-left: 40px;
+    }
+
+    .corpo {
+        padding: 30px 45px !important;
+    }
+
+    .card-text {
+        text-align: justify;
+    }
+
+    .data {
+        font-size: 18px;
+    }
+
+    .card {
+        border-radius: 0 !important;
+        width: 94%;
+        margin-bottom: 20px;
+    }
+
+    .card img {
+        width: 100%;
+    }
+
+    .cards-menores {
+        margin-top: 20px;
+    }
+
+    .cards-menores .data {
+        font-size: 14px;
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>
+
+
+
+<main>
+    <h1 style="font-size: 30px; margin-bottom: 10px;">Novidades</h1>
+
+    <div class="row">
+        <div class="col-xl-2 filtros-side">
+            <form class="form-filtro" action="{% url 'Postagem:resultado_novidades' %}" method="get">
+                {% csrf_token %}
+                <label class="title-check" for="modelo"> Filtrar por Titulo:</label>
+                
+                <input type="text" name="titulo" id="titulo" class="form-control money" value="{{ request.GET.titulo }}">
+                
+                <div class="col-xl-12">
+                </div>
+                <hr>
+
+
+                <label class="title-check" for="modelo"> Filtrar por Tema:</label>
+                
+                <input type="text" name="conteudo" id="conteudo" class="form-control money" value="{{ request.GET.conteudo }}">
+                
+                <div class="col-xl-12">
+                </div>
+                <hr>
+
+                <div class="d-flex justify-content-center">
+
+                    <button name="checkboxBt" type="submit" class="btn btn-success bt-buscar">Buscar</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-xl-9 col-md-12 meio">
+            {% if first_object %}
+            <div class="card">
+                <img src="{{ first_object.imagem.url }}" class="card-img-top" alt="...">
+                <div class="card-body corpo">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h3 class="card-title">{{ first_object.titulo }}</h3>
+                    </div>  
+                    <p style="margin-top: -15px; margin-bottom: 25px;font-size: 15px;" class="data">{{ first_object.created_at }}</p>
+                    <p class="card-text">{{ first_object.Resumo }}</p>
+                    <div style="display: flex; justify-content: end;  ;bottom: 10px;">
+                        <button style="border-radius: 10px;" class="btn btn-primary"><a style="color: white;" href="{% url 'Postagem:Detail_novidades' first_object.id %}">Postagem completa</a></button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                {% for postagem in object_list %}
+                {% if postagem.categoria_postagem == "Novidades" and postagem != first_object %}
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="d-flex cards-menores justify-content-center flex-container" style="margin-left: -50px;">
+                        <div class="card" style="max-width: 25rem;height: 40rem ;margin-left: -5px;">
+                            {% if postagem.imagem %}
+                            <img style="height: 300px;" src="{{ postagem.imagem.url }}" class="card-img-top" alt="...">
+                            {% endif %}
+                            <div class="card-body corpo">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h4 class="card-title">{{ postagem.titulo }}</h4>
+                                </div>
+                                <div style="margin-top: -20px; margin-bottom: 15px;">
+                                    <p class="data">{{ postagem.created_at }}</p>
+                                </div>
+                                <p class="card-text">{{ postagem.Resumo }}</p>
+    
+                            </div>
+                            <div style="display: flex; justify-content: end;  ;margin-bottom: 15px; margin-right: 10px;">
+                                <button style="border-radius: 10px;" class="btn btn-primary"><a style="color: white;" href="{% url 'Postagem:Detail_novidades' postagem.id %}">Postagem completa</a></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

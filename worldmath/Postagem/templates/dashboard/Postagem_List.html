@@ -1,0 +1,174 @@
+{% extends 'base_dashboard.html' %}
+{% load i18n %}
+{% block content %}
+
+<style>
+    .filter-form {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    .form-group {
+        margin-right: 20px;
+    }
+
+    .filter-label {
+        margin-right: 10px;
+    }
+
+    .filter-button {
+        padding: 6px 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        align-self: flex-end;
+    }
+
+</style>
+
+<div style="padding-left: 50px;" class="container mt-4">
+  <h3 class="mb-4">Lista de Postagens</h3>
+  <div class="d-flex align-items-center">
+    <a href="{% url 'Postagem:CadastroPostagem' %}" class="btn btn-success mb-3" style="margin-top: 10px;">
+        <i class="fas fa-plus"></i> Novo Cadastro
+    </a>
+    <br>
+    <br>
+    <div class="card ml-3" style ="margin-left: 15px;">
+        <div class="card-body">
+            <p class="card-text">Total de Postagens: {{ num_postagem }}</p>
+        </div>
+    </div>
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div style="width: 100%; left: 5px;" class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div style="left: 0;" class="form-container"> 
+    <form method="get" action="{% url 'Postagem:Lista_postagem' %}" class="filter-form">
+      <div class="form-group">
+        <label style="margin-left: 5px;" for="modelo" class="filter-label"> Filtrar por Titulo:</label>
+        <input type="text" name="titulo" id="titulo" class="form-control money" value="{{ request.GET.titulo }}">
+    </div>
+        <div class="form-group">
+            <label style="margin-left: 5px;" for="preco_min" class="filter-label"> Categoria da Postagem</label>
+            <div class="input-group">
+                <input type="text" name="categoria_postagem" id="categoria_postagem" class="form-control money" value="{{ request.GET.categoria_postagem }}">
+
+            </div>
+        </div>
+
+
+        <button style="margin-bottom: 15px;" type="submit" class="btn btn-primary filter-button">Filtrar</button>
+    </form>
+</div>
+
+  <table class="table table-striped mt-3">
+      <thead class="thead-primary">
+          <tr>
+            <th>Titulo</th>     
+            <th>Categoria</th>
+            <th>Data da Postagem</th>
+            <th>Ações</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for object in object_list %}
+              <tr>
+                  <td>{{ object.titulo }}</td>
+                  <td>{{ object.categoria_postagem }}</td>
+                  <td>{{ object.created_at }}</td>
+                  <td>
+                      <div class="d-flex align-items-center">         
+                        <a href="{% url 'Postagem:Detail_postagem' object.id %}" class="btn btn-sm mr-2 btn-outline-primary">
+                            <i class="bi bi-search"></i>
+                          </a>
+                        
+                          <a href="{% url 'Postagem:Editar_postagem' object.id %}" class="btn btn-primary btn-sm mr-2">
+                            <i class="fas fa-edit"></i>
+                          </a>  
+
+                          <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalExemplo-{{ object.id }}">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                          
+                
+                        {% include "dashboard/postagem_confirm_delete.html" %}
+                   
+                      </div>
+                  </td>
+              </tr>
+          {% empty %}
+              <tr>
+                  <td colspan="6">
+                      <p>Não existem postagens cadastradas.</p>
+                  </td>
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+
+<span class="br-divider my-3"></span>
+
+{% if page_obj.has_other_pages %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">
+                        First   
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        Previous
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page_number in page_obj.paginator.page_range %}
+                {% if page_number <= page_obj.number|add:3 and page_number >= page_obj.number|add:-3 %}
+                    {% if page_obj.number == page_number %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ page_number }}">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_number }}">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        Next
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                        Last
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+
+{%  endblock %}
